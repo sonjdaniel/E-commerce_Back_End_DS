@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
       include: [{ model: Product }],
     });
     if (!categories) {
-      res.status(404).json({ message: "No categories found with that ID." });
+      res.status(404).json({ message: "No categories found with that ID" });
       return;
     }
     res.status(200).json(categories);
@@ -44,6 +44,11 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+  //  Verify if category_name to be updated to is provided
+  if (!req.body.category_name) {
+    res.status(400).json({ message: "Request body cannot be empty" });
+    return;
+  }
   // update a category by its `id` value
   try {
     const updateCategory = await Category.update(req.body, {
@@ -73,7 +78,11 @@ router.delete("/:id", async (req, res) => {
       res.status(404).json({ message: "No category found with that ID" });
       return;
     }
-    res.status(200).json("Category has been deleted");
+    res
+      .status(200)
+      .json(
+        "Category has been deleted. Please note, all products under this category have also been deleted!"
+      );
   } catch (err) {
     res.status(500).json(err);
   }
